@@ -39,6 +39,49 @@ exports.getBooks = async (req, res) => {
   }
 };
 
+
+exports.getBook = async (req, res) => {
+  try {
+    const { id } = req.params;
+    let data = await book.findOne({
+      where: {
+        id,
+      },
+      include: [
+        {
+          model: user,
+          as: 'user',
+          attributes: {
+            exclude: ['createdAt', 'updatedAt', 'password'],
+          },
+        },
+      ],
+      attributes: {
+        exclude: ['createdAt', 'updatedAt', 'idUser'],
+      },
+    });
+
+    data = JSON.parse(JSON.stringify(data));
+
+    data = {
+      ...data,
+      image: process.env.PATH_FILE + data.image,
+    };
+
+    res.send({
+      status: 'success...',
+      data,
+    });
+  } catch (error) {
+    console.log(error);
+    res.send({
+      status: 'failed',
+      message: 'Server Error',
+    });
+  }
+};
+
+
 exports.addBook = async (req, res) => {
   try {
     const data = req.body;

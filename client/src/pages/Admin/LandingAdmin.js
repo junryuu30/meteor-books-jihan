@@ -2,11 +2,18 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom"
 import { API } from "../../config/api";
 import { books } from "../../DataDummy/dummybooks"
+import UpdateBooks from "./UpdateBooks";
 
 const LandingAdmin = () => {
   const navigate = useNavigate()
   const [save, setSave] = useState();
   const [book, setBook] = useState();
+  const [showModal, setShowModal] = useState(false);
+  const [showModalUpdate, setShowModalUpdate] = useState(false);
+  
+   const handleUpdate = () => {
+    setShowModalUpdate(false);
+  };
 
   const config = {
     method: "GET",
@@ -27,18 +34,18 @@ const LandingAdmin = () => {
     }
   };
 
-  // console.log("ini book", book)
-  // const handleDelete = async (e) => {
-  //   e.preventDefault();
-  //   const id = save.id;
-  //   try {
-  //     await API.delete(`/product/${id}`);
-  //     setmodalDelete(false);
-  //     getProduct();
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+  console.log("ini book", book)
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    const id = save.id;
+    try {
+      await API.delete(`/deletebook/${id}`);
+      setShowModal(false)
+      getBook();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     getBook();
@@ -64,7 +71,7 @@ const LandingAdmin = () => {
                 <th className="w-64 p-2">Image</th>
                 <th className="w-64 p-2">Title</th>
                 <th className="p-4">Penulis</th>
-                <th className="p-4">Keterangan</th>
+                <th className="p-4">Category</th>
                 <th className="p-2">Action</th>
             </tr>
             {book?.map((item, index)=>(
@@ -76,20 +83,61 @@ const LandingAdmin = () => {
                   </div>
                 </td>
                 <td className="w-64 p-2">{item.title}</td>
-                <td className="p-4"></td>
-                <td className="p-4"></td>
+                <td className="p-4">{item.author}</td>
+                <td className="p-4">{item.status}</td>
                 <td className="p-2">
                   <button className="text-white rounded px-4 py-2 bg-[#5F7161] mr-3"
                   onClick={()=>{
-                    navigate("/update-books");
+                    setShowModalUpdate(true);
                     setSave(item);}
                   }>Update</button>
-                <button className="rounded px-4 py-2 text-zinc-900 bg-pink-200 mt-3">Delete</button>
+                <button className="rounded px-4 py-2 text-zinc-900 bg-pink-200 mt-3" 
+                onClick={() => {setShowModal(true); setSave(item)}}
+                >Delete</button>
                 </td>
             </tr>
              ))}
         </table>
       </div>
+      
+
+      {showModal ? (
+        
+        <>
+          <div
+            className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
+          >
+            <div className="relative w-auto my-6 mx-auto max-w-3xl">
+              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+                <div className="relative p-6 flex-auto">
+                  <h2>Delete This Book?</h2>
+                </div>
+                <div className="mb-5">
+                  <button
+                      className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                      type="button"
+                      onClick={() => setShowModal(false)}
+                    >
+                      Close
+                    </button>
+                    <button
+                      className="bg-red-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                      type="button"
+                      onClick={handleDelete}
+                    >
+                      Delete
+                    </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+        </>
+      ) : null}
+
+      {showModalUpdate && <UpdateBooks setOpenModalUpdate={setShowModalUpdate} />}
+
+
     </div>
     </>
   );

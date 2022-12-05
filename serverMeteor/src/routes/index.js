@@ -5,7 +5,7 @@ const router = express.Router()
 // Controller
 // import controller function here 
 const { addUsers, getUsers, getUser, updateUser, deleteUser } = require('../controllers/user')
-const { addBook, getBooks, updateBook, deleteBook  } = require('../controllers/book')
+const { addBook, getBooks, getBook, updateBook, deleteBook  } = require('../controllers/book')
 const { register, login, checkAuth } = require("../controllers/auth");
 
 // Middleware
@@ -22,9 +22,10 @@ router.patch('/user/:id', updateUser)
 router.delete('/user/:id', deleteUser)
 
 router.get('/books', getBooks)
+router.get("/book/:id", auth, getBook);
 router.post('/book', auth, uploadFile("image"), addBook)
 router.patch('/book/:id', auth, uploadFile("image"), updateBook)
-router.delete('/book/:id', auth, deleteBook)
+router.delete('/deletebook/:id', auth, deleteBook)
 
 // add route here
 router.post("/register", register);
