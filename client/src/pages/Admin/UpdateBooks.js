@@ -1,42 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { API } from "../../config/api";
 import { useQuery } from "react-query";
 
-const UpdateBooks = ({ setOpenModalUpdate }) => {
+const UpdateBooks = ({ setOpenModalUpdate, save, getBook }) => {
+  const navigate = useNavigate()
   const [preview, setPreview] = useState(null);
   const { id } = useParams();
-
-  const [form, setForm] = useState({
-    title: "",
-    desc: "",
-    author: "",
-    status: "",
-    approve: "",
-    image: "",
-  });
-
-  let { data: book } = useQuery("editCache", async () => {
-    const response = await API.get(`/books`);
-
-    console.log("data sebelum di updatebook", response.data.data);
-    return response.data.data;
-  });
-
-  useEffect(() => {
-    if (book) {
-      setPreview(book.image);
-      setForm({
-        ...form,
-        id: book.id,
-        title: book.title,
-        desc: book.desc,
-        author: book.author,
-        status: book.status,
-        approve: book.approve,
-      });
-    }
-  }, [book]);
+  const [form, setForm] = useState({});
 
   const handleChange = (e) => {
     setForm({
@@ -55,6 +26,7 @@ const UpdateBooks = ({ setOpenModalUpdate }) => {
   const handleUpdate = async (e) => {
     try {
       e.preventDefault();
+      const id = save.id
 
       const formData = new FormData();
       if (form.image) {
@@ -71,6 +43,10 @@ const UpdateBooks = ({ setOpenModalUpdate }) => {
           Authorization: `Bearer ${localStorage.token}`,
         },
       });
+      navigate("/home-admin");
+      setOpenModalUpdate(false)
+      getBook()
+
     } catch (error) {
       console.log(error);
     }

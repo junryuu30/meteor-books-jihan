@@ -135,7 +135,7 @@ const LandingAdmin = () => {
         </>
       ) : null}
 
-      {showModalUpdate && <UpdateBooks setOpenModalUpdate={setShowModalUpdate} />}
+      {showModalUpdate && <UpdateBooks setOpenModalUpdate={setShowModalUpdate} save={save} getBook={getBook} />}
 
 
     </div>
